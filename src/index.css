@@ -1,0 +1,298 @@
+/* ============================================================
+   C++ Learning & Course Companion — Global Styles
+   Tailwind CSS 4 · Apple / App Store Design Language
+   ============================================================ */
+
+@import "tailwindcss";
+
+/* ---------- Font Stacks (Apple-first, applied globally) ---------- */
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", "SF Mono Regular", Consolas, Menlo, monospace;
+}
+
+/* ---------- Light Theme ---------- */
+:root {
+  --bg-start: #ffffff;
+  --bg-end: #f5f5f7;
+
+  --surface: #ffffff;
+  --surface-secondary: #f5f5f7;
+  --surface-border: rgba(0, 0, 0, 0.06);
+
+  --color-primary: #0071e3;
+  --color-accent: #0071e3;
+  --color-success: #34c759;
+  --color-warning: #ff9500;
+  --color-danger: #ff3b30;
+
+  --text-heading: #1d1d1f;
+  --text-body: #424245;
+  --text-muted: #86868b;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.6);
+}
+
+/* ---------- Dark Theme ---------- */
+.dark {
+  --bg-start: #000000;
+  --bg-end: #161617;
+
+  --surface: #1c1c1e;
+  --surface-secondary: #2c2c2e;
+  --surface-border: rgba(255, 255, 255, 0.08);
+
+  --color-primary: #0a84ff;
+  --color-accent: #0a84ff;
+  --color-success: #30d158;
+  --color-warning: #ff9f0a;
+  --color-danger: #ff453a;
+
+  --text-heading: #f5f5f7;
+  --text-body: #e8e8ed;
+  --text-muted: #98989d;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.4);
+
+  --glass-bg: rgba(22, 22, 23, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+/* ============================================================
+   Base — SF font applied to everything
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text-body);
+  background: var(--bg-start);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transition: background-color 400ms ease, color 400ms ease;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* ============================================================
+   Surface & card components
+   ============================================================ */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-md);
+  transition: transform 300ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    box-shadow 300ms ease;
+}
+
+.surface-card {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-md);
+  transition: transform 300ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    box-shadow 300ms ease;
+}
+
+/* ============================================================
+   Buttons — Apple pill style
+   ============================================================ */
+.btn-primary {
+  background: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 980px;
+  padding: 12px 24px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 200ms ease, background-color 200ms ease,
+    box-shadow 200ms ease, filter 200ms ease;
+  will-change: transform;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--color-primary) 28%, transparent);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-secondary {
+  background: var(--surface-secondary);
+  color: var(--text-heading);
+  border: 1px solid var(--surface-border);
+  border-radius: 980px;
+  padding: 12px 24px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 200ms ease, background-color 200ms ease,
+    border-color 200ms ease;
+}
+
+.btn-secondary:hover {
+  background: color-mix(in srgb, var(--surface-secondary) 80%, var(--color-primary) 8%);
+  border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+/* ============================================================
+   Theme transitions — only color/background (GPU-light)
+   ============================================================ */
+.theme-transition,
+.theme-transition * {
+  transition: background-color 400ms ease, color 400ms ease,
+    border-color 400ms ease, box-shadow 400ms ease;
+}
+
+/* ============================================================
+   Selection & scrollbar
+   ============================================================ */
+::selection {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface-secondary);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+
+/* ============================================================
+   Animations — transform & opacity only (GPU-accelerated)
+   ============================================================ */
+.page-fade {
+  animation: pageFadeIn 400ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast-enter {
+  animation: toastIn 350ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Hero subtle float */
+.hero-float {
+  animation: heroFloat 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes heroFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Fade-up on load for staggered content */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 600ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   Interaction polish
+   ============================================================ */
+.surface-card:hover,
+.glass-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
