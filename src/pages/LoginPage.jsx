@@ -90,7 +90,7 @@ export default function LoginPage() {
             className="text-xs text-center mt-6"
             style={{ color: 'var(--text-muted)' }}
           >
-            Your progress is securely saved to the cloud and synced across devices.
+            Your progress is saved on this device.
           </p>
         </div>
       </div>

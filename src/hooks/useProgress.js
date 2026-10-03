@@ -1,28 +1,27 @@
 import { useCallback } from 'react'
-import { supabase } from '../lib/supabaseClient'
 
 /* ============================================================
    useProgress
-   Cloud storage + business-logic layer for per-user learning
-   progress. All data is persisted to Supabase (user_progress
-   table). localStorage is NO LONGER used for progress or auth.
+   Storage + business-logic layer for per-user learning
+   progress. All data is persisted to localStorage — pure
+   frontend, no backend required.
 
-   Table: user_progress
-     user_id              (uuid)   -> auth.uid()
-     started_on           (date)
-     last_login           (date)
-     lectures_completed   (TEXT[])
-     exercises_completed  (JSONB)  -> { topicId: [indices], __completedDates: { topicId: date } }
-     quiz_scores          (JSONB)  -> { topicId: score }
-     total_points         (int)
+   localStorage keys:
+     cpp-progress-<username>  Per-user progress JSON
 
-   The `completedDates` field used by the UI is stored inside
-   exercises_completed under the reserved key `__completedDates`
-   so no schema change is required.
+   Progress data model:
+     username             (string)
+     startedOn            (YYYY-MM-DD)
+     lastLogin            (YYYY-MM-DD)
+     lecturesCompleted    (string[])
+     exercisesCompleted   ({ topicId: [indices] })
+     completedDates       ({ topicId: YYYY-MM-DD })
+     quizScores           ({ topicId: score })
+     totalPoints          (int)
    ============================================================ */
 
-/** Reserved key used to nest completedDates inside exercises_completed JSONB. */
-const DATES_KEY = '__completedDates'
+/** localStorage key prefix for per-user progress. */
+export const PROGRESS_KEY_PREFIX = 'cpp-progress-'
 
 /** Return today's date as YYYY-MM-DD (local time). */
 export function todayISO() {
@@ -47,81 +46,29 @@ export function createEmptyProgress(username) {
 }
 
 /* ============================================================
-   Cloud storage helpers (Supabase)
+   Storage helpers (localStorage)
    ============================================================ */
 
-/**
- * Map a DB row (snake_case) to the frontend progress object
- * (camelCase). Separates completedDates from exercises_completed.
- */
-function mapRowToProgress(row) {
-  if (!row) return null
-
-  const exercisesRaw = row.exercises_completed || {}
-  const completedDates = exercisesRaw[DATES_KEY] || {}
-  // Strip the reserved key so exercisesCompleted only holds topic arrays.
-  const exercisesCompleted = { ...exercisesRaw }
-  delete exercisesCompleted[DATES_KEY]
-
-  return {
-    username: row.user_id,
-    startedOn: row.started_on,
-    lastLogin: row.last_login,
-    lecturesCompleted: row.lectures_completed || [],
-    exercisesCompleted,
-    quizScores: row.quiz_scores || {},
-    totalPoints: row.total_points || 0,
-    completedDates,
-  }
-}
-
-/**
- * Map a frontend progress object to DB columns (snake_case).
- * Merges completedDates back into exercises_completed JSONB.
- */
-function mapProgressToRow(progress) {
-  const exercisesCompleted = { ...progress.exercisesCompleted }
-  if (progress.completedDates && Object.keys(progress.completedDates).length) {
-    exercisesCompleted[DATES_KEY] = progress.completedDates
-  }
-  return {
-    user_id: progress.username,
-    started_on: progress.startedOn,
-    last_login: progress.lastLogin,
-    lectures_completed: progress.lecturesCompleted || [],
-    exercises_completed: exercisesCompleted,
-    quiz_scores: progress.quizScores || {},
-    total_points: progress.totalPoints || 0,
-  }
-}
-
-/** Load a user's progress from Supabase (or null if none). */
-export async function loadProgress(userId) {
-  const { data, error } = await supabase
-    .from('user_progress')
-    .select('*')
-    .eq('user_id', userId)
-    .single()
-
-  if (error) {
-    // No row yet (e.g. right after signup before trigger fires).
+/** Load a user's progress from localStorage (or null if none). */
+export function loadProgress(username) {
+  try {
+    const raw = localStorage.getItem(PROGRESS_KEY_PREFIX + username)
+    if (!raw) return null
+    return JSON.parse(raw)
+  } catch {
     return null
   }
-  return mapRowToProgress(data)
 }
 
-/** Persist a progress object to Supabase (upsert by user_id). */
-export async function saveProgress(userId, progress) {
-  const row = mapProgressToRow(progress)
-  const { error } = await supabase
-    .from('user_progress')
-    .upsert(row, { onConflict: 'user_id' })
-
-  if (error) {
+/** Persist a progress object to localStorage. */
+export function saveProgress(username, progress) {
+  try {
+    localStorage.setItem(PROGRESS_KEY_PREFIX + username, JSON.stringify(progress))
+    return true
+  } catch (error) {
     console.error('Failed to save progress:', error)
     return false
   }
-  return true
 }
 
 /* ============================================================
@@ -130,14 +77,14 @@ export async function saveProgress(userId, progress) {
    current progress + a setter (provided by AuthContext).
 
    All mutators update React state synchronously (optimistic) and
-   then persist to Supabase in the background.
+   then persist to localStorage instantly.
    ============================================================ */
 export function useProgress(progress, setProgress) {
-  // Re-save the current progress to Supabase in the background.
+  // Re-save the current progress to localStorage in the background.
   const persist = useCallback(
     (next) => {
       if (!next) return
-      saveProgress(next.username, next) // fire-and-forget
+      saveProgress(next.username, next)
     },
     [],
   )

@@ -4,9 +4,9 @@ import { useToast } from '../../context/ToastContext'
 
 /* ============================================================
    LoginForm
-   Email + password -> authenticate via Supabase Auth.
-   On success the AuthContext loads the user's progress; the
-   parent route will redirect away from /login.
+   Email + password -> authenticate against locally stored
+   accounts. On success the AuthContext loads the user's
+   progress; the parent route will redirect away from /login.
    ============================================================ */
 
 export default function LoginForm() {

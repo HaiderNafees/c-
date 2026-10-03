@@ -4,9 +4,9 @@ import { useToast } from '../../context/ToastContext'
 
 /* ============================================================
    SignupForm
-   Create a new account with Supabase Auth (email + password).
+   Create a new account (email + password) stored locally.
    On success the user is auto-logged-in and an EMPTY progress
-   record is created in the cloud.
+   record is created in localStorage.
    ============================================================ */
 
 export default function SignupForm() {
